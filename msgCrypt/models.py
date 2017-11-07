@@ -43,7 +43,7 @@ class TextMsg(object):
     def __init__(self, xmltext):
         ret, fromuser, touser = XMLParse.extractInfo(xmltext=xmltext)
         if ret != 0:
-            throw_exception("[error]: EncodingAESKey unvalid !", FormatException)
+            throw_exception("[error]: post parse failed !", FormatException)
         self.toUser = fromuser
         self.fromUser = touser
 

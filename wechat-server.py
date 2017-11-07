@@ -13,6 +13,7 @@ sys.setdefaultencoding('utf-8')
 
 from msgCrypt.settings import logger,IP,PORT,msg_crypt
 from msgCrypt.models import CallBackMsg,TextMsg
+from msgCrypt import ierror
 define("port", default=PORT, help="run on the given port", type=int)
 define("host", default=IP, help="run port on given host", type=str)
 
@@ -34,10 +35,15 @@ class MainHandler(tornado.web.RequestHandler):
 
     def post(self):
         msg_signature, timestamp, nonce = self.get_msg()
-        textSend = TextMsg(self.request.body)
-        ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=textSend.generate(msg="功能未开发"))
-        self.write(encrypt_xml)
-        self.finish()
+        msg = CallBackMsg(msg_signature, timestamp, nonce)
+        ret, xml_content = msg.decodePOST(sPostData=self.request.body)
+        if ret != ierror.WXBizMsgCrypt_OK:
+            self.set_status(403,"fail to parse post")
+        else:
+            textSend = TextMsg(xml_content)
+            ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=textSend.generate(msg="功能未开发"))
+            self.write(encrypt_xml)
+            self.finish()
 
 def main():
 
