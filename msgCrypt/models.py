@@ -42,7 +42,7 @@ class TextMsg(MsgModel):
     TEXT_MSG_TEMP = """<xml>
        <ToUserName><![CDATA[%(toUser)s]]></ToUserName>
        <FromUserName><![CDATA[%(fromUser)s]]></FromUserName> 
-       <CreateTime>%(timestamp)d</CreateTime>
+       <CreateTime>%(timestamp)s</CreateTime>
        <MsgType><![CDATA[text]]></MsgType>
        <Content><![CDATA[%(msg)s]]></Content>
     </xml>"""
