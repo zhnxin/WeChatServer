@@ -167,7 +167,7 @@ class Prpcrypt(object):
             # 使用BASE64对密文进行解码，然后AES-CBC解密
             plain_text  = cryptor.decrypt(base64.b64decode(text))
         except Exception,e:
-            #print e
+            #print 
             return  ierror.WXBizMsgCrypt_DecryptAES_Error,None
         try:
             pad = ord(plain_text[-1])

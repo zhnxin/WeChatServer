@@ -11,10 +11,13 @@ BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 config.read(os.path.join(BASE_DIR, 'wechatserver.conf'))
 
 CorpID = config.get('work','CorpID')
-LOG_LEVEL = config.get('work', 'LogLevel')
 Token = config.get('app','Token')
 EncodingAESKey = config.get('app','EncodingAESKey')
 Corpsecret = config.get('app','Corpsecret')
+
+IP = config.get('base', 'IP')
+PORT = config.get('base', 'Port')
+LOG_LEVEL = config.get('bash', 'LogLevel')
 
 msg_crypt = WXBizMsgCrypt(sToken=Token,sEncodingAESKey=EncodingAESKey,sCorpID=CorpID,sCorpsecret=Corpsecret)
 
