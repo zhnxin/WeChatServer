@@ -178,7 +178,7 @@ class Prpcrypt(object):
             content = plain_text[16:-pad];print content
             xml_len = socket.ntohl(struct.unpack("I",content[ : 4])[0])
             xml_content = content[4 : xml_len+4]
-            from_corpID = content[xml_len+4:];print from_CorpID
+            from_corpID = content[xml_len+4:]
         except Exception,e:
             print e
             return  ierror.WXBizMsgCrypt_IllegalBuffer,None
