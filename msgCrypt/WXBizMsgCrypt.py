@@ -15,11 +15,8 @@ import time
 import struct
 from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
-import sys
 import socket
-reload(sys)
 import ierror
-sys.setdefaultencoding('utf-8')
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案

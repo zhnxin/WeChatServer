@@ -17,7 +17,7 @@ Corpsecret = config.get('app','Corpsecret')
 
 IP = config.get('base', 'IP')
 PORT = config.get('base', 'Port')
-LOG_LEVEL = config.get('bash', 'LogLevel')
+LOG_LEVEL = config.get('base', 'LogLevel')
 
 msg_crypt = WXBizMsgCrypt(sToken=Token,sEncodingAESKey=EncodingAESKey,sCorpID=CorpID,sCorpsecret=Corpsecret)
 
