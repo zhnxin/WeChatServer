@@ -38,12 +38,18 @@ class MainHandler(tornado.web.RequestHandler):
         msg = CallBackMsg(msg_signature, timestamp, nonce)
         ret, xml_content = msg.decodePOST(sPostData=self.request.body)
         if ret != ierror.WXBizMsgCrypt_OK:
+            logger.error("decode post error:{}".format(ret))
             self.set_status(403,"fail to parse post")
         else:
             textSend = TextMsg(xml_content)
-            ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=textSend.generate(msg="功能未开发"))
-            self.write(encrypt_xml)
-            self.finish()
+            to_xml = textSend.generate(msg="功能未开发")
+            ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=str(to_xml))
+            if ret != ierror.WXBizMsgCrypt_OK:
+                logger.error("decode post error:{}".format(ret))
+                self.set_status(403, "fail to encryp post")
+            else:
+                self.write(encrypt_xml)
+                self.finish()
 
 def main():
 
@@ -55,11 +61,16 @@ def main():
     tornado.ioloop.IOLoop.instance().start()
 
 def test():
-    msg_signature='6d0aa184173e0bc0569dfaab7287fcfeeae0ff54'
-    timestamp='1509966115'
-    nonce='LSUyzTUbgeDrG0J7'
-    msg = CallBackMsg(msg_signature, timestamp, nonce)
-    msg.generateReply("author：zhengxin")
+    to_xml="""<xml>
+       <ToUserName><![CDATA[18817818367]]></ToUserName>
+       <FromUserName><![CDATA[wx233aa340015c3e05]]></FromUserName> 
+       <CreateTime>1510048276</CreateTime>
+       <MsgType><![CDATA[text]]></MsgType>
+       <Content><![CDATA[功能未开发]]></Content>
+    </xml"""
+    ret, encrypt_xml=msg_crypt.EncryptMsg(sNonce="167251678",sReplyMsg=to_xml)
+    print ret
+    print encrypt_xml
 
 
 if __name__=="__main__":
