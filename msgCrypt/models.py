@@ -31,7 +31,14 @@ class CallBackMsg(object):
             return ret, dataDict
 
 
-class TextMsg(object):
+class MsgModel(object):
+    def __init__(self, xml_contend):
+        self.content = xml_contend
+        self.toUser = xml_contend['xml']['FromUserName']
+        self.fromUser = xml_contend['xml']['ToUserName']
+
+
+class TextMsg(MsgModel):
     TEXT_MSG_TEMP = """<xml>
        <ToUserName><![CDATA[%(toUser)s]]></ToUserName>
        <FromUserName><![CDATA[%(fromUser)s]]></FromUserName> 
@@ -39,13 +46,6 @@ class TextMsg(object):
        <MsgType><![CDATA[text]]></MsgType>
        <Content><![CDATA[%(msg)s]]></Content>
     </xml>"""
-
-    def __init__(self, xmltext):
-        ret, fromuser, touser = XMLParse.extractInfo(xmltext=xmltext)
-        if ret != 0:
-            throw_exception("[error]: post parse failed !", FormatException)
-        self.toUser = fromuser
-        self.fromUser = touser
 
     def generate(self, msg, timestamp=None):
         if timestamp is None:
