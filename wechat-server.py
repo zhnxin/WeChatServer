@@ -12,7 +12,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 from msgCrypt.settings import logger,IP,PORT,msg_crypt
-from msgCrypt.models import CallBackMsg
+from msgCrypt.models import CallBackMsg,TextMsg
 define("port", default=PORT, help="run on the given port", type=int)
 define("host", default=IP, help="run port on given host", type=str)
 
@@ -33,10 +33,11 @@ class MainHandler(tornado.web.RequestHandler):
         self.write(replyEchoStr)
 
     def post(self):
-        logger.debug(self.request.body)
         msg_signature, timestamp, nonce = self.get_msg()
-        # msg = CallBackMsg(msg_signature, timestamp, nonce)
-        ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg='功能未完善')
+        msg = CallBackMsg(msg_signature, timestamp, nonce)
+        postData = msg.decodePOST(self.request.body)
+        textSend = TextMsg(postData)
+        ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=textSend.generate(msg="功能未开发"))
         self.write(encrypt_xml)
         self.finish()
 
