@@ -3,6 +3,7 @@
 
 import os
 import ConfigParser
+from .WXBizMsgCrypt import WXBizMsgCrypt
 
 config = ConfigParser.ConfigParser()
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
