@@ -94,6 +94,20 @@ class XMLParse:
         resp_xml = self.AES_TEXT_RESPONSE_TEMPLATE % resp_dict
         return resp_xml
 
+    @staticmethod
+    def extractInfo(xmltext):
+        """提取出xml数据包中的加密消息
+        @param xmltext: 待提取的xml字符串
+        @return: 提取出的加密消息请求人和目标
+        """
+        try:
+            xml_tree = ET.fromstring(xmltext)
+            fromUser  = xml_tree.find("FromUserName")
+            toUser = xml_tree.find("ToUserName")
+            return  ierror.WXBizMsgCrypt_OK, fromUser.text, toUser.text
+        except Exception,e:
+            #print e
+            return  ierror.WXBizMsgCrypt_ParseXml_Error,None,None
 
 class PKCS7Encoder():
     """提供基于PKCS7算法的加解密接口"""

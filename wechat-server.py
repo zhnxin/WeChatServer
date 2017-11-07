@@ -34,9 +34,7 @@ class MainHandler(tornado.web.RequestHandler):
 
     def post(self):
         msg_signature, timestamp, nonce = self.get_msg()
-        msg = CallBackMsg(msg_signature, timestamp, nonce)
-        postData = msg.decodePOST(self.request.body)
-        textSend = TextMsg(postData)
+        textSend = TextMsg(self.request.body)
         ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=textSend.generate(msg="功能未开发"))
         self.write(encrypt_xml)
         self.finish()

@@ -4,6 +4,7 @@ import xmltodict
 import time
 
 from settings import msg_crypt
+from WXBizMsgCrypt import XMLParse, throw_exception, FormatException
 import ierror
 
 
@@ -39,9 +40,12 @@ class TextMsg(object):
        <Content><![CDATA[%(msg)s]]></Content>
     </xml>"""
 
-    def __init__(self, dataDict):
-        self.toUser = dataDict['xml']['FromUserName']
-        self.fromUser = dataDict['xml']['ToUserName']
+    def __init__(self, xmltext):
+        ret, fromuser, touser = XMLParse.extractInfo(xmltext=xmltext)
+        if ret != 0:
+            throw_exception("[error]: EncodingAESKey unvalid !", FormatException)
+        self.toUser = fromuser
+        self.fromUser = touser
 
     def generate(self, msg, timestamp=None):
         if timestamp is None:
