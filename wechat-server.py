@@ -12,7 +12,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-from msgCrypt.settings import logger, IP, PORT, msg_crypt
+from msgCrypt.settings import logger, IP, PORT, MSGCRYPTMAP
 from msgCrypt.models import CallBackMsg
 from msgCrypt import ierror
 from msgCrypt.handlerFactory import getHandler
@@ -21,7 +21,7 @@ define("port", default=PORT, help="run on the given port", type=int)
 define("host", default=IP, help="run port on given host", type=str)
 
 
-class MainHandler(tornado.web.RequestHandler):
+class DemoHandler(tornado.web.RequestHandler):
     def get_msg(self):
         msg_signature = self.get_argument("msg_signature", "")
         timestamp = self.get_argument("timestamp", "")
@@ -33,7 +33,7 @@ class MainHandler(tornado.web.RequestHandler):
         msg_signature, timestamp, nonce = self.get_msg()
         echostr = self.get_argument("echostr", "")
         msg = CallBackMsg(msg_signature, timestamp, nonce)
-        ret, replyEchoStr = msg.verifyURL(sEchoStr=echostr, sMsgCrypt=msg_crypt)
+        ret, replyEchoStr = msg.verifyURL(sEchoStr=echostr, sMsgCrypt=MSGCRYPTMAP['demo'])
         logger.debug("verify url ret:{}====replyEchoStr:{}".format(ret, replyEchoStr))
         self.write(replyEchoStr)
 
@@ -41,7 +41,7 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self):
         msg_signature, timestamp, nonce = self.get_msg()
         msg = CallBackMsg(msg_signature, timestamp, nonce)
-        ret, xml_content = msg.decodePOST(sPostData=self.request.body, sMsgCrypt=msg_crypt)
+        ret, xml_content = msg.decodePOST(sPostData=self.request.body, sMsgCrypt=MSGCRYPTMAP['demo'])
         if ret != ierror.WXBizMsgCrypt_OK:
             logger.error("decode post error:{}".format(ret))
             self.set_status(403, "fail to parse post")
@@ -49,7 +49,7 @@ class MainHandler(tornado.web.RequestHandler):
             handler = getHandler(xml_content)
             if handler:
                 to_xml = handler(xml_content)
-                ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=str(to_xml))
+                ret, encrypt_xml = MSGCRYPTMAP['demo'].EncryptMsg(sNonce=nonce, sReplyMsg=str(to_xml))
                 if ret != ierror.WXBizMsgCrypt_OK:
                     logger.error("decode post error:{}".format(ret))
                     self.set_status(403, "fail to encryp post")
@@ -59,12 +59,13 @@ class MainHandler(tornado.web.RequestHandler):
 
 
 def updateAccessToken():
-    msg_crypt.UpdateAccessToken()
+    for app in MSGCRYPTMAP.values():
+        app.UpdateAccessToken()
 
 
 def main():
     application = tornado.web.Application([
-        (r"^/api/public/{0,1}", MainHandler),
+        (r"^/api/public/{0,1}", DemoHandler),
     ])
     server = tornado.httpserver.HTTPServer(application)
     server.listen(options.port, address=IP)

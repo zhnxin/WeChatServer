@@ -23,20 +23,20 @@ def get_conf():
 
 
 config = get_conf()
-IP = config['server'].get("ip", '0.0.0.0')
+IP = config['server'].get('ip', '0.0.0.0')
 PORT = config['server'].get("port", '8000')
 LOG_LEVEL = config['server'].get("loglever", 'debug')
 
-CorpID = config.get('work', 'CorpID')
-Token = config.get('app', 'Token')
-EncodingAESKey = config.get('app', 'EncodingAESKey')
-Corpsecret = config.get('app', 'Corpsecret')
+def loadMsgCryptMap():
+    MsgCryptMap={}
+    CorpID = config['wechat']['CorpID']
+    for app,args in config['wechat']['app'].items():
+        MsgCryptMap[app] = WXBizMsgCrypt(sToken=args['Token'],
+         sEncodingAESKey=args['EncodingAESKey'],
+         sCorpID=CorpID, sCorpsecret=args['Secret'])
+    return MsgCryptMap
 
-
-
-msg_crypt = WXBizMsgCrypt(sToken=Token, sEncodingAESKey=EncodingAESKey, sCorpID=CorpID, sCorpsecret=Corpsecret)
-
-
+MSGCRYPTMAP = loadMsgCryptMap()
 def set_log(level, filename='wechatserver.log'):
     """
     return a log file object
