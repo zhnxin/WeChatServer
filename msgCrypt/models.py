@@ -85,12 +85,12 @@ class PassiveImageMsg(PassiveMsgModel):
 
 class EventClickHandlerFactory(object):
     def __init__(self):
-        self.factory = {}
+        self.__factory = {}
 
     def put(self,buttonKey,func):
         assert isinstance(func,types.FunctionType)
-        self.factory[buttonKey] = func
+        self.__factory[buttonKey] = func
 
     def get(self,buttonKey):
-        self.factory.get(buttonKey,None)
+        return self.__factory.get(buttonKey,None)
 
