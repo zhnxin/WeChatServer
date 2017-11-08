@@ -2,10 +2,9 @@
 # -*- encoding:utf-8 -*-
 import xmltodict
 import time
+import types
 
 from settings import msg_crypt
-from WXBizMsgCrypt import XMLParse, throw_exception, FormatException
-from handlerFactory import getHandler
 import ierror
 
 
@@ -87,8 +86,8 @@ class EventClickHandlerFactory(object):
     def __init__(self):
         self.factory = {}
 
-    def putHandler(self,buttonKey,func):
-        assert(isinstance(func,function))
+    def put(self,buttonKey,func):
+        assert isinstance(func,types.FunctionType)
         self.factory[buttonKey] = func
 
     def get(self,buttonKey):

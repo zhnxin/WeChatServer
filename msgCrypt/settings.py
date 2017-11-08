@@ -5,7 +5,6 @@ import os
 import ConfigParser
 import logging
 from .WXBizMsgCrypt import WXBizMsgCrypt
-from .models import EventClickHandlerFactory
 
 config = ConfigParser.ConfigParser()
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
