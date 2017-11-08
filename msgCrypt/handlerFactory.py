@@ -18,7 +18,8 @@ def defaultHandler(xml_contend):
 
 def getHandler(xml_content):
     if xml_content['xml']['MsgType'] == 'event' and xml_content['xml']['Event'] == 'click':
-        return clickHandlerFactory.get(xml_content['xml']['EventKey'])
+        handle = clickHandlerFactory.get(xml_content['xml']['EventKey'])
+        return handle
     else:
         return defaultHandler
 
