@@ -5,6 +5,7 @@ import time
 
 from settings import msg_crypt
 from WXBizMsgCrypt import XMLParse, throw_exception, FormatException
+from handlerFactory import getHandler
 import ierror
 
 
@@ -31,21 +32,21 @@ class CallBackMsg(object):
             return ret, dataDict
 
 
-class MsgModel(object):
+class PassiveMsgModel(object):
     def __init__(self, xml_contend):
         self.content = xml_contend
         self.toUser = xml_contend['xml']['FromUserName']
         self.fromUser = xml_contend['xml']['ToUserName']
 
 
-class TextMsg(MsgModel):
-    TEXT_MSG_TEMP = """<xml>
-       <ToUserName><![CDATA[%(toUser)s]]></ToUserName>
-       <FromUserName><![CDATA[%(fromUser)s]]></FromUserName> 
-       <CreateTime>%(timestamp)s</CreateTime>
-       <MsgType><![CDATA[text]]></MsgType>
-       <Content><![CDATA[%(msg)s]]></Content>
-    </xml>"""
+class PassiveTextMsg(PassiveMsgModel):
+    MSG_TEMP = """<xml>
+   <ToUserName><![CDATA[%(toUser)s]]></ToUserName>
+   <FromUserName><![CDATA[%(fromUser)s]]></FromUserName> 
+   <CreateTime>%(timestamp)s</CreateTime>
+   <MsgType><![CDATA[text]]></MsgType>
+   <Content><![CDATA[%(msg)s]]></Content>
+</xml>"""
 
     def generate(self, msg, timestamp=None):
         if timestamp is None:
@@ -56,5 +57,40 @@ class TextMsg(MsgModel):
             "msg": msg,
             "timestamp": timestamp
         }
-        resp_xml = self.TEXT_MSG_TEMP % resp_dict
+        resp_xml = self.MSG_TEMP % resp_dict
         return resp_xml
+
+class PassiveImageMsg(PassiveMsgModel):
+    MSG_TEMP = """<xml>
+   <ToUserName><![CDATA[%(toUser)s]]></ToUserName>
+   <FromUserName><![CDATA[%(fromUser)s]]></FromUserName>
+   <CreateTime>%(timestamp)</CreateTime>
+   <MsgType><![CDATA[image]]></MsgType>
+   <Image>
+       <MediaId><![CDATA[%(media_id)s]]></MediaId>
+   </Image>
+</xml>"""
+
+    def generate(self,media_id,timestamp=None):
+        if timestamp is None:
+            timestamp = str(int(time.time()))
+        resp_dict = {
+            "toUser": self.toUser,
+            "fromUser": self.fromUser,
+            "media_id": media_id,
+            "timestamp": timestamp
+        }
+        resp_xml = self.MSG_TEMP % resp_dict
+        return resp_xml
+
+class EventClickHandlerFactory(object):
+    def __init__(self):
+        self.factory = {}
+
+    def putHandler(self,buttonKey,func):
+        assert(isinstance(func,function))
+        self.factory[buttonKey] = func
+
+    def get(self,buttonKey):
+        self.factory.get(buttonKey,None)
+

@@ -5,6 +5,7 @@ import os
 import ConfigParser
 import logging
 from .WXBizMsgCrypt import WXBizMsgCrypt
+from .models import EventClickHandlerFactory
 
 config = ConfigParser.ConfigParser()
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -42,3 +43,4 @@ def set_log(level, filename='wechatserver.log'):
     return logger_f
 
 logger = set_log(LOG_LEVEL)
+

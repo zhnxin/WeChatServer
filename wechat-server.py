@@ -12,8 +12,9 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 from msgCrypt.settings import logger,IP,PORT,msg_crypt
-from msgCrypt.models import CallBackMsg,TextMsg
+from msgCrypt.models import CallBackMsg
 from msgCrypt import ierror
+from msgCrypt.handlerFactory import getHandler
 define("port", default=PORT, help="run on the given port", type=int)
 define("host", default=IP, help="run port on given host", type=str)
 
@@ -41,15 +42,16 @@ class MainHandler(tornado.web.RequestHandler):
             logger.error("decode post error:{}".format(ret))
             self.set_status(403,"fail to parse post")
         else:
-            textSend = TextMsg(xml_content)
-            to_xml = textSend.generate(msg="功能未开发")
-            ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=str(to_xml))
-            if ret != ierror.WXBizMsgCrypt_OK:
-                logger.error("decode post error:{}".format(ret))
-                self.set_status(403, "fail to encryp post")
-            else:
-                self.write(encrypt_xml)
-                self.finish()
+            handler = getHandler(xml_content)
+            if handler:
+                to_xml = handler()
+                ret, encrypt_xml = msg_crypt.EncryptMsg(sNonce=nonce, sReplyMsg=str(to_xml))
+                if ret != ierror.WXBizMsgCrypt_OK:
+                    logger.error("decode post error:{}".format(ret))
+                    self.set_status(403, "fail to encryp post")
+                else:
+                    self.write(encrypt_xml)
+            self.finish()
 
 def main():
 
@@ -60,20 +62,6 @@ def main():
     server.listen(options.port, address=IP)
     tornado.ioloop.IOLoop.instance().start()
 
-def test():
-    to_xml="""<xml>
-       <ToUserName><![CDATA[18817818367]]></ToUserName>
-       <FromUserName><![CDATA[wx233aa340015c3e05]]></FromUserName> 
-       <CreateTime>1510048276</CreateTime>
-       <MsgType><![CDATA[text]]></MsgType>
-       <Content><![CDATA[功能未开发]]></Content>
-    </xml"""
-    ret, encrypt_xml=msg_crypt.EncryptMsg(sNonce="167251678",sReplyMsg=to_xml)
-    print ret
-    print encrypt_xml
-
-
 if __name__=="__main__":
     print "Run server on %s:%s" % (options.host, options.port)
     main()
-    # test()
