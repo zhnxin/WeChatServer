@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- encoding:utf-8 -*-
-import xmltodict
 import time
 import types
+
+import xmltodict
 
 from settings import msg_crypt
 import ierror
