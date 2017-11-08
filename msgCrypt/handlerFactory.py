@@ -16,9 +16,8 @@ def defaultHandler(xml_contend):
     to_xml = textSend.generate(msg=msg)
     return to_xml
 
-
 def getHandler(xml_contend):
-    if (xml_contend['xml']['MsgType'] == 'event' and xml_contend['xml']['MsgType']['Event']):
+    if xml_contend['xml']['MsgType'] == 'event' and xml_contend['xml']['Event'] == 'click':
         return clickHandlerFactory.get(xml_contend['xml']['EventKey'])
     else:
         return defaultHandler
