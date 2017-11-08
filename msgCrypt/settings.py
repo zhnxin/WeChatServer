@@ -1,25 +1,41 @@
 #!/usr/bin/env python
-#-*- encoding:utf-8 -*-
+# -*- encoding:utf-8 -*-
 
 import os
-import ConfigParser
+import yaml
 import logging
 from .WXBizMsgCrypt import WXBizMsgCrypt
 
-config = ConfigParser.ConfigParser()
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-config.read(os.path.join(BASE_DIR, 'wechatserver.conf'))
 
-CorpID = config.get('work','CorpID')
-Token = config.get('app','Token')
-EncodingAESKey = config.get('app','EncodingAESKey')
-Corpsecret = config.get('app','Corpsecret')
+def load_conf(conf_file_name):
+    path = os.path.join(BASE_DIR, conf_file_name)
+    if os.path.exists(path):
+        return yaml.load(file(path))
+    return None
 
-IP = config.get('base', 'IP')
-PORT = config.get('base', 'Port')
-LOG_LEVEL = config.get('base', 'LogLevel')
 
-msg_crypt = WXBizMsgCrypt(sToken=Token,sEncodingAESKey=EncodingAESKey,sCorpID=CorpID,sCorpsecret=Corpsecret)
+def get_conf():
+    configuration = load_conf('application.yml')
+    if not configuration:
+        configuration = load_conf('application.yaml')
+    return configuration
+
+
+config = get_conf()
+IP = config['server'].get("ip", '0.0.0.0')
+PORT = config['server'].get("port", '8000')
+LOG_LEVEL = config['server'].get("loglever", 'debug')
+
+CorpID = config.get('work', 'CorpID')
+Token = config.get('app', 'Token')
+EncodingAESKey = config.get('app', 'EncodingAESKey')
+Corpsecret = config.get('app', 'Corpsecret')
+
+
+
+msg_crypt = WXBizMsgCrypt(sToken=Token, sEncodingAESKey=EncodingAESKey, sCorpID=CorpID, sCorpsecret=Corpsecret)
+
 
 def set_log(level, filename='wechatserver.log'):
     """
@@ -41,5 +57,5 @@ def set_log(level, filename='wechatserver.log'):
     logger_f.addHandler(fh)
     return logger_f
 
-logger = set_log(LOG_LEVEL)
 
+logger = set_log(LOG_LEVEL)

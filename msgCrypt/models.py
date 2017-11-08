@@ -4,8 +4,6 @@ import time
 import types
 
 import xmltodict
-
-from settings import msg_crypt
 import ierror
 
 
@@ -16,13 +14,13 @@ class CallBackMsg(object):
         self.timestamp = timestamp
         self.nonce = nonce
 
-    def verifyURL(self, sEchoStr):
-        ret, replyEchoStr = msg_crypt.VerifyURL(sMsgSignature=self.msg_signature, sTimeStamp=self.timestamp,
+    def verifyURL(self, sEchoStr,sMsgCrypt):
+        ret, replyEchoStr = sMsgCrypt.VerifyURL(sMsgSignature=self.msg_signature, sTimeStamp=self.timestamp,
                                                 sNonce=self.nonce, sEchoStr=sEchoStr)
         return ret, replyEchoStr
 
-    def decodePOST(self, sPostData):
-        ret, xml_content = msg_crypt.DecryptMsg(sMsgSignature=self.msg_signature, sTimeStamp=self.timestamp,
+    def decodePOST(self, sPostData,sMsgCrypt):
+        ret, xml_content = sMsgCrypt.DecryptMsg(sMsgSignature=self.msg_signature, sTimeStamp=self.timestamp,
                                                 sNonce=self.nonce,
                                                 sPostData=sPostData)
         if ret != ierror.WXBizMsgCrypt_OK:

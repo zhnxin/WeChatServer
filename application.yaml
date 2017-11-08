@@ -1,0 +1,13 @@
+server:
+  port:
+  ip:
+  loglever:
+
+wechat:
+  CorpID: 
+  app:
+    demo:
+      AgentId: 
+      Token: 
+      EncodingAESKey: 
+      Secret: 
