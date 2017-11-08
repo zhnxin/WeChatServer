@@ -1,7 +1,7 @@
 server:
-  port:
-  ip:
-  loglever:
+  port: 8000
+  ip: 0.0.0.0
+  loglever: debug
 
 wechat:
   CorpID: 
