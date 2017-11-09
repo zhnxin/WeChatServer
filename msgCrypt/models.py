@@ -73,7 +73,7 @@ class PassiveImageMsg(PassiveMsg):
    <CreateTime>{resp_dict[timestamp]}</CreateTime>
    <MsgType><![CDATA[image]]></MsgType>
    <Image>
-       <MediaId><![CDATA[{resp_dict[media_id]}]></MediaId>
+       <MediaId><![CDATA[{resp_dict[media_id]}]]></MediaId>
    </Image>
 </xml>"""
 
