@@ -282,7 +282,7 @@ class WXBizMsgCrypt(object):
         img_url = "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={}&type=image".format(
             self.access_token)
         files = {'image': imageFile}
-        res = requests.post(img_url, files=files)
+        res = requests.post(img_url, files=files,verify=False,timeout=5)
         if res.status_code / 100 == 2 and res.json()['errcode'] == 0:
             return res.json()['media_id']
         else:
