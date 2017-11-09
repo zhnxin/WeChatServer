@@ -46,11 +46,11 @@ class PassiveMsg(object):
 
 class PassiveTextMsg(PassiveMsg):
     MSG_TEMP = """<xml>
-   <ToUserName><![CDATA[%(toUser)s]]></ToUserName>
-   <FromUserName><![CDATA[%(fromUser)s]]></FromUserName> 
-   <CreateTime>%(timestamp)s</CreateTime>
+   <ToUserName><![CDATA[{resp_dict[toUser]}]]></ToUserName>
+   <FromUserName><![CDATA[{resp_dict[fromUser]}]]></FromUserName> 
+   <CreateTime>{resp_dict[timestamp]}</CreateTime>
    <MsgType><![CDATA[text]]></MsgType>
-   <Content><![CDATA[%(msg)s]]></Content>
+   <Content><![CDATA[{resp_dict[msg]}]]></Content>
 </xml>"""
 
     def generate(self, msg, timestamp=None):
@@ -62,18 +62,18 @@ class PassiveTextMsg(PassiveMsg):
             "msg": msg,
             "timestamp": timestamp
         }
-        resp_xml = self.MSG_TEMP % resp_dict
+        resp_xml = self.MSG_TEMP.format(resp_dict=resp_dict)
         return resp_xml
 
 
 class PassiveImageMsg(PassiveMsg):
     MSG_TEMP = """<xml>
-   <ToUserName><![CDATA[%(toUser)s]]></ToUserName>
-   <FromUserName><![CDATA[%(fromUser)s]]></FromUserName>
-   <CreateTime>%(timestamp)</CreateTime>
+   <ToUserName><![CDATA[{resp_dict[toUser]}]]></ToUserName>
+   <FromUserName><![CDATA[{resp_dict[fromUser]}]]></FromUserName>
+   <CreateTime>{resp_dict[timestamp]}</CreateTime>
    <MsgType><![CDATA[image]]></MsgType>
    <Image>
-       <MediaId><![CDATA[%(media_id)s]]></MediaId>
+       <MediaId><![CDATA[{resp_dict[media_id]}]></MediaId>
    </Image>
 </xml>"""
 
@@ -86,12 +86,13 @@ class PassiveImageMsg(PassiveMsg):
             "media_id": media_id,
             "timestamp": timestamp
         }
-        resp_xml = self.MSG_TEMP % resp_dict
+        resp_xml = self.MSG_TEMP.format(resp_dict=resp_dict)
         return resp_xml
 
     def generateFromImage(self,imageFile,sMsgCrypt,timestamp=None):
         image_id = sMsgCrypt.UploadImage(imageFile)
         if image_id:
+            print "upload image:{}".format(image_id)
             return self.generate(image_id,timestamp)
         else:
             throw_exception("[error]: failed in uploading images !", FormatException)
@@ -156,7 +157,7 @@ class PositiveImageMsg(PositiveMsg):
 
     def setImage(self, imageFile, sMsgCrypt):
         image_id = sMsgCrypt.UploadImage(imageFile)
-        print "upload image:".format(image_id)
+        print "upload image:{}".format(image_id)
         if image_id:
             self.messageBody['image'] = {"media_id": image_id}
         else:
