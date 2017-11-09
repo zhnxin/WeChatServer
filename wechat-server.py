@@ -60,7 +60,7 @@ class DemoHandler(tornado.web.RequestHandler):
         else:
             handler = getHandler(xml_content)
             if handler:
-                to_xml = handler(xml_content)
+                to_xml = handler(xml_content,MSGCRYPTMAP['demo'])
                 ret, encrypt_xml = MSGCRYPTMAP['demo'].EncryptMsg(sNonce=nonce, sReplyMsg=str(to_xml))
                 if ret != ierror.WXBizMsgCrypt_OK:
                     logger.error("decode post error:{}".format(ret))

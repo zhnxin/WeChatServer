@@ -89,6 +89,15 @@ class PassiveImageMsg(PassiveMsg):
         resp_xml = self.MSG_TEMP % resp_dict
         return resp_xml
 
+    def generateFromImage(self,imageFile,sMsgCrypt,timestamp=None):
+        media_id = sMsgCrypt.UploadImage(imageFile)
+        if image_id:
+            return self.generate(media_id,timestamp)
+        else:
+            logger.error('failed in uploading images')
+            throw_exception("[error]: failed in uploading images !", FormatException)
+            return None
+
 
 class PositiveMsg(object):
     """
@@ -146,8 +155,8 @@ class PositiveImageMsg(PositiveMsg):
         super(PositiveImageMsg, self).__init__(access_token, agentid, toUser, toParty, toTag)
         self.messageBody['msgtype'] = 'image'
 
-    def setImage(self, imagePath, sMsgCrypt):
-        image_id = sMsgCrypt.UploadImage(imagePath)
+    def setImage(self, imageFile, sMsgCrypt):
+        image_id = sMsgCrypt.UploadImage(imageFile)
         print "upload image:".format(image_id)
         if image_id:
             self.messageBody['image'] = {"media_id": image_id}

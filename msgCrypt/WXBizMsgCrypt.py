@@ -279,12 +279,10 @@ class WXBizMsgCrypt(object):
         pc = Prpcrypt(self.key)
         return pc.decrypt(sEchoStr, self.corpID)
 
-    def UploadImage(self, filePath):
+    def UploadImage(self, imageFile):
         img_url = "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={}&type=image".format(
             self.access_token)
-        if not os.path.isfile(filePath):
-            return None
-        files = {'image': open(filePath, 'rb')}
+        files = {'image': imageFile}
         res = requests.post(img_url, files=files)
         if res.status_code / 100 == 2 and res.json()['errcode'] == 0:
             return res.json()['media_id']
