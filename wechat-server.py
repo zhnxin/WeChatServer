@@ -27,11 +27,11 @@ class DemoHandler(tornado.web.RequestHandler):
     executor = ThreadPoolExecutor(2)
     @run_on_executor
     def sendMsg(self):
-        txtmsg = PositiveTextMsg(access_token=demo.UpdateAccessToken(),agentid=demo.agentID)
+        txtmsg = PositiveTextMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
         txtmsg.setContent("（づ￣3￣）づ╭❤～")
         txtmsg.send()
-        imgmsg = PositiveImageMsg(access_token=demo.UpdateAccessToken(),agentid=demo.agentID)
-        imgmsg.setImage('temp.jpg',demo)
+        imgmsg = PositiveImageMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
+        imgmsg.setImage('temp.jpg',MSGCRYPTMAP['demo'])
         imgmsg.send()
 
     def get_msg(self):
