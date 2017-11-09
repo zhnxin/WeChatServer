@@ -33,7 +33,7 @@ def loadMsgCryptMap():
     for app,args in config['wechat']['app'].items():
         MsgCryptMap[app] = WXBizMsgCrypt(sToken=args['Token'],
          sEncodingAESKey=args['EncodingAESKey'],
-         sCorpID=CorpID, sCorpsecret=args['Secret'])
+         sCorpID=CorpID,sAgentId=args['AgentId'], sCorpsecret=args['Secret'])
     return MsgCryptMap
 
 MSGCRYPTMAP = loadMsgCryptMap()

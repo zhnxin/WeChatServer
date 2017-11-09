@@ -6,6 +6,8 @@ import tornado.gen
 import tornado.httpserver
 import tornado.options
 from tornado.options import define, options
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor
 
 import sys
 
@@ -13,7 +15,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 from msgCrypt.settings import logger, IP, PORT, MSGCRYPTMAP
-from msgCrypt.models import CallBackMsg
+from msgCrypt.models import CallBackMsg,PositiveImageMsg,PositiveTextMsg
 from msgCrypt import ierror
 from msgCrypt.handlerFactory import getHandler
 
@@ -22,6 +24,16 @@ define("host", default=IP, help="run port on given host", type=str)
 
 
 class DemoHandler(tornado.web.RequestHandler):
+    executor = ThreadPoolExecutor(2)
+    @run_on_executor
+    def sendMsg(self):
+        txtmsg = PositiveTextMsg(access_token=demo.UpdateAccessToken(),agentid=demo.agentID)
+        txtmsg.setContent("（づ￣3￣）づ╭❤～")
+        txtmsg.send()
+        imgmsg = PositiveImageMsg(access_token=demo.UpdateAccessToken(),agentid=demo.agentID)
+        imgmsg.setImage('temp.jpg',demo)
+        imgmsg.send()
+
     def get_msg(self):
         msg_signature = self.get_argument("msg_signature", "")
         timestamp = self.get_argument("timestamp", "")
@@ -55,11 +67,13 @@ class DemoHandler(tornado.web.RequestHandler):
                     self.set_status(403, "fail to encryp post")
                 else:
                     self.write(encrypt_xml)
+            #self.sendMsg()
             self.finish()
 
 
 def updateAccessToken():
-    for app in MSGCRYPTMAP.values():
+    for name, app in MSGCRYPTMAP.items():
+        logger.debug('access_token update:%s' % name)
         app.UpdateAccessToken()
 
 
@@ -76,4 +90,5 @@ def main():
 
 if __name__ == "__main__":
     print "Run server on %s:%s" % (options.host, options.port)
+    updateAccessToken()
     main()

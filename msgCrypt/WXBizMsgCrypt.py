@@ -17,6 +17,7 @@ from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
 import socket
 import ierror
+import os
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
@@ -201,7 +202,7 @@ class WXBizMsgCrypt(object):
     # @param sToken: 公众平台上，开发者设置的Token
     # @param sEncodingAESKey: 公众平台上，开发者设置的EncodingAESKey
     # @param CorpID: 企业号的CorpID
-    def __init__(self, sToken, sEncodingAESKey, sCorpID, sCorpsecret=None):
+    def __init__(self, sToken, sEncodingAESKey, sCorpID, sAgentId=None, sCorpsecret=None):
         try:
             self.key = base64.b64decode(sEncodingAESKey + "=")
             assert len(self.key) == 32
@@ -212,6 +213,7 @@ class WXBizMsgCrypt(object):
             self.corpsecret = sCorpsecret
         self.token = sToken
         self.corpID = sCorpID
+        self.agentID = sAgentId
 
     def UpdateAccessToken(self):
         res = requests.get(
@@ -276,3 +278,16 @@ class WXBizMsgCrypt(object):
             return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         return pc.decrypt(sEchoStr, self.corpID)
+
+    def UploadImage(self, filePath):
+        img_url = "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={}&type=image".format(
+            self.access_token)
+        if not os.path.isfile(filePath):
+            return None
+        files = {'image': open(filePath, 'rb')}
+        res = requests.post(img_url, files=files)
+        if res.status_code / 100 == 2 and res.json()['errcode'] == 0:
+            return res.json()['media_id']
+        else:
+            print res.text
+            return None
