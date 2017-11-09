@@ -216,9 +216,8 @@ class WXBizMsgCrypt(object):
         self.agentID = sAgentId
 
     def UpdateAccessToken(self):
-        res = requests.get(
-            "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corpsecret={}".format(self.corpID, self.corpsecret),
-            timeout=1)
+        res = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corpsecret={}".format(self.corpID, self.corpsecret),
+                           verify=False,timeout=1)
         res.raise_for_status()
         result = res.json()
         self.access_token = result.get('access_token', '')
