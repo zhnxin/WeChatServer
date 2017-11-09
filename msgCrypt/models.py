@@ -90,11 +90,10 @@ class PassiveImageMsg(PassiveMsg):
         return resp_xml
 
     def generateFromImage(self,imageFile,sMsgCrypt,timestamp=None):
-        media_id = sMsgCrypt.UploadImage(imageFile)
+        image_id = sMsgCrypt.UploadImage(imageFile)
         if image_id:
-            return self.generate(media_id,timestamp)
+            return self.generate(image_id,timestamp)
         else:
-            logger.error('failed in uploading images')
             throw_exception("[error]: failed in uploading images !", FormatException)
             return None
 
