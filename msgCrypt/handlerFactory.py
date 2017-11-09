@@ -25,13 +25,13 @@ def getHandler(xml_content):
 
 
 def eventHandlerDemo(xml_content,sMsgCrypt):
-    textSend = PassiveTextMsg(xml_contend)
+    textSend = PassiveTextMsg(xml_content)
     msg = defaultMsg[random.randint(0, len(defaultMsg) - 1)]
     to_xml = textSend.generate(msg=msg)
     return to_xml
 
 def enentHandlerDemo_image(xml_content,sMsgCrypt):
-    imageSend = PassiveImageMsg(xml_contend)
+    imageSend = PassiveImageMsg(xml_content)
     with open('image/temp.jpg','rb') as imgFile:
         to_xml = imageSend.generateFromImage(imgFile,sMsgCrypt)
     return to_xml
