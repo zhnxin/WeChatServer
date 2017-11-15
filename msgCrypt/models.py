@@ -4,10 +4,10 @@ import time
 import types
 
 import xmltodict
-import ierror
+from .ierror import *
 import json
 import requests
-from WXBizMsgCrypt import throw_exception, FormatException
+from .WXBizMsgCrypt import throw_exception, FormatException
 
 """
 # @param source_type: 公众平台上传素材类型：图片（image）、语音（voice）、视频（video），普通文件（file）
@@ -30,7 +30,7 @@ class CallBackMsg(object):
         ret, xml_content = sMsgCrypt.DecryptMsg(sMsgSignature=self.msg_signature, sTimeStamp=self.timestamp,
                                                 sNonce=self.nonce,
                                                 sPostData=sPostData)
-        if ret != ierror.WXBizMsgCrypt_OK:
+        if ret != WXBizMsgCrypt_OK:
             return ret, None
         else:
             dataDict = xmltodict.parse(xml_content)
@@ -92,7 +92,7 @@ class PassiveImageMsg(PassiveMsg):
     def generateFromImage(self,imageFile,sMsgCrypt,timestamp=None):
         image_id = sMsgCrypt.UploadImage(imageFile)
         if image_id:
-            print "upload image:{}".format(image_id)
+            print("upload image:{}".format(image_id))
             return self.generate(image_id,timestamp)
         else:
             throw_exception("[error]: failed in uploading images !", FormatException)
@@ -157,7 +157,7 @@ class PositiveImageMsg(PositiveMsg):
 
     def setImage(self, imageFile, sMsgCrypt):
         image_id = sMsgCrypt.UploadImage(imageFile)
-        print "upload image:{}".format(image_id)
+        print("upload image:{}".format(image_id))
         if image_id:
             self.messageBody['image'] = {"media_id": image_id}
         else:

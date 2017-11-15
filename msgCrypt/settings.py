@@ -11,7 +11,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 def load_conf(conf_file_name):
     path = os.path.join(BASE_DIR, conf_file_name)
     if os.path.exists(path):
-        return yaml.load(file(path))
+        return yaml.load(open(path,'r'))
     return None
 
 

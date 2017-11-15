@@ -9,11 +9,6 @@ from tornado.options import define, options
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
 
-import sys
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
 from msgCrypt.settings import logger, IP, PORT, MSGCRYPTMAP
 from msgCrypt.models import CallBackMsg,PositiveImageMsg,PositiveTextMsg
 from msgCrypt import ierror
@@ -90,6 +85,6 @@ def main():
 
 
 if __name__ == "__main__":
-    print "Run server on %s:%s" % (options.host, options.port)
+    print("Run server on {}:{}".format(options.host, options.port))
     updateAccessToken()
     main()

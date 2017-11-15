@@ -16,7 +16,7 @@ import struct
 from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
 import socket
-import ierror
+from .ierror import *
 import os
 
 """
@@ -51,10 +51,10 @@ class SHA1:
             sortlist.sort()
             sha = hashlib.sha1()
             sha.update("".join(sortlist))
-            return ierror.WXBizMsgCrypt_OK, sha.hexdigest()
-        except Exception, e:
-            # print e
-            return ierror.WXBizMsgCrypt_ComputeSignature_Error, None
+            return WXBizMsgCrypt_OK, sha.hexdigest()
+        except Exception as e:
+            # print( e)
+            return WXBizMsgCrypt_ComputeSignature_Error, None
 
 
 class XMLParse:
@@ -77,10 +77,10 @@ class XMLParse:
             xml_tree = ET.fromstring(xmltext)
             encrypt = xml_tree.find("Encrypt")
             touser_name = xml_tree.find("ToUserName")
-            return ierror.WXBizMsgCrypt_OK, encrypt.text, touser_name.text
-        except Exception, e:
-            # print e
-            return ierror.WXBizMsgCrypt_ParseXml_Error, None, None
+            return WXBizMsgCrypt_OK, encrypt.text, touser_name.text
+        except Exception as e:
+            # print( e)
+            return WXBizMsgCrypt_ParseXml_Error, None, None
 
     def generate(self, encrypt, signature, timestamp, nonce):
         """生成xml消息
@@ -154,10 +154,10 @@ class Prpcrypt(object):
         try:
             ciphertext = cryptor.encrypt(text)
             # 使用BASE64对加密后的字符串进行编码
-            return ierror.WXBizMsgCrypt_OK, base64.b64encode(ciphertext)
-        except Exception, e:
-            print e
-            return ierror.WXBizMsgCrypt_EncryptAES_Error, None
+            return WXBizMsgCrypt_OK, base64.b64encode(ciphertext)
+        except Exception as e:
+            print( e)
+            return WXBizMsgCrypt_EncryptAES_Error, None
 
     def decrypt(self, text, corpID):
         """对解密后的明文进行补位删除
@@ -168,9 +168,9 @@ class Prpcrypt(object):
             cryptor = AES.new(self.key, self.mode, self.key[:16])
             # 使用BASE64对密文进行解码，然后AES-CBC解密
             plain_text = cryptor.decrypt(base64.b64decode(text))
-        except Exception, e:
-            # print e
-            return ierror.WXBizMsgCrypt_DecryptAES_Error, None
+        except Exception as e:
+            # print( e)
+            return WXBizMsgCrypt_DecryptAES_Error, None
         try:
             pad = ord(plain_text[-1])
             # 去掉补位字符串
@@ -181,11 +181,11 @@ class Prpcrypt(object):
             xml_len = socket.ntohl(struct.unpack("I", content[: 4])[0])
             xml_content = content[4: xml_len + 4]
             from_corpID = content[xml_len + 4:]
-        except Exception, e:
-            print e
-            return ierror.WXBizMsgCrypt_IllegalBuffer, None
+        except Exception as e:
+            print( e)
+            return WXBizMsgCrypt_IllegalBuffer, None
         if from_corpID != corpID:
-            return ierror.WXBizMsgCrypt_ValidateCorpID_Error, None
+            return WXBizMsgCrypt_ValidateCorpID_Error, None
         return 0, xml_content
 
     def get_random_str(self):
@@ -208,7 +208,7 @@ class WXBizMsgCrypt(object):
             assert len(self.key) == 32
         except:
             throw_exception("[error]: EncodingAESKey unvalid !", FormatException)
-            # return ierror.WXBizMsgCrypt_IllegalAesKey)
+            # return WXBizMsgCrypt_IllegalAesKey)
         if sCorpsecret:
             self.corpsecret = sCorpsecret
         self.token = sToken
@@ -263,7 +263,7 @@ class WXBizMsgCrypt(object):
         if ret != 0:
             return ret, None
         if not signature == sMsgSignature:
-            return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
+            return WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         ret, xml_content = pc.decrypt(encrypt, self.corpID)
         return ret, xml_content
@@ -274,7 +274,7 @@ class WXBizMsgCrypt(object):
         if ret != 0:
             return ret, None
         if not signature == sMsgSignature:
-            return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
+            return WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         return pc.decrypt(sEchoStr, self.corpID)
 
@@ -286,5 +286,5 @@ class WXBizMsgCrypt(object):
         if res.status_code / 100 == 2 and res.json()['errcode'] == 0:
             return res.json()['media_id']
         else:
-            print res.text
+            print(res.text)
             return None
