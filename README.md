@@ -1,8 +1,9 @@
 # workWeChatServer
 
 ## request
-- python 2.7
+- python 2.7/3.x
 - tornado
+- xmltodict
 
 ## introduction
 - 支持同企业多企业号配置
