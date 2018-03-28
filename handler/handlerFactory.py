@@ -10,11 +10,8 @@ clickHandlerFactory = EventClickHandlerFactory(textHandlerFactory)
 
 # handler factory 入口
 def getHandler(xml_content):
-    if xml_content['xml']['MsgType'] == 'event' and xml_content['xml']['Event'] == 'click':
-        handle = clickHandlerFactory.get(xml_content['xml']['EventKey'])
-        return handle
-    else:
-        return None
+    global clickHandlerFactory
+    return clickHandlerFactory.process(xml_content)
 
 
 import random
