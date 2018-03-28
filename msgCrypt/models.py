@@ -166,14 +166,3 @@ class PositiveImageMsg(PositiveMsg):
     def setImageID(self,image_id):
         self.messageBody['image'] = {"media_id": image_id}
 
-
-class EventClickHandlerFactory(object):
-    def __init__(self):
-        self.__factory = {}
-
-    def put(self, buttonKey, func):
-        assert isinstance(func, types.FunctionType)
-        self.__factory[buttonKey] = func
-
-    def get(self, buttonKey):
-        return self.__factory.get(buttonKey, None)
