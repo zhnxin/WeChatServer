@@ -1,4 +1,4 @@
-# workWeChatServer
+# weChatServer
 
 ## request
 - python 2.7/3.x
