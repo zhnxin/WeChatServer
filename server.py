@@ -26,7 +26,7 @@ class DemoHandler(tornado.web.RequestHandler):
         # txtmsg.setContent("（づ￣3￣）づ╭❤～")
         # txtmsg.send()
         imgmsg = PositiveImageMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
-        with open('msgCrypt/test.jpg', 'wr') as test_img:
+        with open('msgCrypt/test.jpg', 'r') as test_img:
             imgmsg.setImage(test_img, MSGCRYPTMAP['demo'])
             imgmsg.send()
 
