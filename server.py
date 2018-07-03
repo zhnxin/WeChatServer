@@ -130,7 +130,7 @@ def main():
     application = tornado.web.Application([
         (r"^/public/api/{0,1}", DemoHandler),
         (r"^/api/demo/v1/msg/{0,1}",ActiceMsgHandler),
-        (r"^/api/demo/v1/user/{0,1}",ActiceMsgHandler)
+        (r"^/api/demo/v1/user/{0,1}",DemoUserHandler)
     ])
     server = tornado.httpserver.HTTPServer(application)
     server.listen(options.port, address=IP)
