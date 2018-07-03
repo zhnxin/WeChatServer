@@ -38,7 +38,7 @@ def set_log(level, filename='wechatserver.log'):
     #     os.chmod(log_file, 0777)
     log_level_total = {'debug': logging.DEBUG, 'info': logging.INFO, 'warning': logging.WARN, 'error': logging.ERROR,
                        'critical': logging.CRITICAL}
-    logger_f = logging.getLogger('wechat')
+    logger_f = logging.getLogger('')
     logger_f.setLevel(logging.DEBUG)
     fh = logging.FileHandler(log_file)
     fh.setLevel(log_level_total.get(level, logging.DEBUG))

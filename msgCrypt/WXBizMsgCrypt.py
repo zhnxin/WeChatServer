@@ -224,7 +224,7 @@ class WXBizMsgCrypt(object):
          #@return：成功0，失败返回对应的错误码	
 
     def UpdateAccessToken(self):
-        res = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corpsecret={}".format(self.m_sCorpid, self.m_sCorpsecret),
+        res = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corpsecret={}".format(self.m_sCorpid.decode('utf-8'), self.m_sCorpsecret),
                            verify=False,timeout=1)
         res.raise_for_status()
         result = res.json()

@@ -12,7 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 from msgCrypt.settings import logger, IP, PORT
 
 from msgCrypt.utils import MSGCRYPTMAP
-from msgCrypt.models import CallBackMsg,PositiveImageMsg
+from msgCrypt.models import CallBackMsg,PositiveImageMsg,PositiveTextMsg
 from msgCrypt import ierror
 from handler.handlerFactory import getHandler
 
@@ -21,16 +21,6 @@ define("host", default=IP, help="run port on given host", type=str)
 
 
 class DemoHandler(tornado.web.RequestHandler):
-    executor = ThreadPoolExecutor(2)
-    @run_on_executor
-    def sendMsg(self):
-        # txtmsg = PositiveTextMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
-        # txtmsg.setContent("（づ￣3￣）づ╭❤～")
-        # txtmsg.send()
-        imgmsg = PositiveImageMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
-        with open('msgCrypt/test.jpg', 'r') as test_img:
-            imgmsg.setImage(test_img, MSGCRYPTMAP['demo'])
-            imgmsg.send()
 
     def get_msg(self):
         msg_signature = self.get_argument("msg_signature", "")
@@ -64,14 +54,37 @@ class DemoHandler(tornado.web.RequestHandler):
             handler = getHandler(xml_content)
             if handler:
                 to_xml = handler(xml_content,MSGCRYPTMAP['demo'])
+                logger.debug(to_xml)
                 ret, encrypt_xml = MSGCRYPTMAP['demo'].EncryptMsg(sNonce=nonce, sReplyMsg=str(to_xml))
                 if ret != ierror.WXBizMsgCrypt_OK:
                     logger.error("decode post error:{}".format(ret))
                     self.set_status(403, "fail to encryp post")
                 else:
                     self.write(encrypt_xml)
-            #self.sendMsg()
             self.finish()
+
+class ActiceMsgHandler(tornado.web.RequestHandler):
+    executor = ThreadPoolExecutor(2)
+
+    @run_on_executor
+    def send_text_msg(self,msg):
+        txtmsg = PositiveTextMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
+        txtmsg.setContent(msg)
+        txtmsg.send()
+        
+    @run_on_executor
+    def send_img_msg(self):
+        imgmsg = PositiveImageMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
+        with open('msgCrypt/test.jpg', 'r') as test_img:
+            imgmsg.setImage(test_img, MSGCRYPTMAP['demo'])
+            imgmsg.send()
+    
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        if data.get('type',None) == 'text':
+            self.send_text_msg(data.get('content',''))
+        self.write('finished')
+        self.finish()
 
 
 def updateAccessToken():
@@ -83,6 +96,7 @@ def updateAccessToken():
 def main():
     application = tornado.web.Application([
         (r"^/public/api/{0,1}", DemoHandler),
+        (r"^/api/msg{0,1}",ActiceMsgHandler),
     ])
     server = tornado.httpserver.HTTPServer(application)
     server.listen(options.port, address=IP)
@@ -92,6 +106,6 @@ def main():
 
 
 if __name__ == "__main__":
-    logger.info("Run server on {}:{}".format(options.host, options.port))
+    print("Run server on {}:{}".format(options.host, options.port))
     updateAccessToken()
     main()
