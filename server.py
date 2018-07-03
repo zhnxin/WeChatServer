@@ -67,22 +67,44 @@ class ActiceMsgHandler(tornado.web.RequestHandler):
     executor = ThreadPoolExecutor(2)
 
     @run_on_executor
-    def send_text_msg(self,msg):
-        txtmsg = PositiveTextMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
+    def send_text_msg(self,msg,toUser, toParty, toTag):
+        txtmsg = PositiveTextMsg(
+            access_token=MSGCRYPTMAP['demo'].access_token,
+            agentid=MSGCRYPTMAP['demo'].agentID,
+            toUser=toUser,
+            toParty=toParty,
+            toTag=toTag
+            )
         txtmsg.setContent(msg)
         txtmsg.send()
         
     @run_on_executor
-    def send_img_msg(self):
-        imgmsg = PositiveImageMsg(access_token=MSGCRYPTMAP['demo'].UpdateAccessToken(),agentid=MSGCRYPTMAP['demo'].agentID)
+    def send_img_msg(self,toUser, toParty, toTag):
+        imgmsg = PositiveImageMsg(
+            access_token=MSGCRYPTMAP['demo'].access_token,
+            agentid=MSGCRYPTMAP['demo'].agentID,
+            toUser=toUser,
+            toParty=toParty,
+            toTag=toTag
+        )
         with open('msgCrypt/test.jpg', 'r') as test_img:
             imgmsg.setImage(test_img, MSGCRYPTMAP['demo'])
             imgmsg.send()
     
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
-        if data.get('type',None) == 'text':
-            self.send_text_msg(data.get('content',''))
+    
+        toUser=data.get('toUser','')
+        toParty=data.get('toParty','')
+        toTag=data.get('toTag','')
+        msg_type = data.get('type',None)
+        if not (toParty or toUser or toTag):
+            toUser = '@all'
+        if msg_type:
+            if  msg_type == 'text':
+                self.send_text_msg(data.get('content',''),toUser, toParty, toTag)
+            elif msg_type == 'img':
+                self.send_img_msg(self,toUser, toParty, toTag)
         self.write('finished')
         self.finish()
 

@@ -49,3 +49,4 @@ tmp/*
 
 *.go
 *.bak
+application.yaml
