@@ -138,7 +138,7 @@ class PositiveMsg(object):
         }
 
     def send(self):
-        messgae_body = json.dumps(self.messageBody)
+        messgae_body = json.dumps(self.messageBody,encoding='utf-8',ensure_ascii=False)
         res = requests.post(self.sendURL, data=messgae_body)
         return res
 
