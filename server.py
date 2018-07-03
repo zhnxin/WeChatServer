@@ -95,9 +95,9 @@ class ActiceMsgHandler(tornado.web.RequestHandler):
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
     
-        toUser=data.get('toUser','')
-        toParty=data.get('toParty','')
-        toTag=data.get('toTag','')
+        toUser=self._read_to_target(data.get('toUser',''))
+        toParty=self._read_to_target(data.get('toParty',''))
+        toTag=self._read_to_target(data.get('toTag',''))
         msg_type = data.get('type',None)
         if not (toParty or toUser or toTag):
             toUser = '@all'
@@ -108,6 +108,11 @@ class ActiceMsgHandler(tornado.web.RequestHandler):
                 self.send_img_msg(toUser,toParty,toTag)
         self.write('finished')
         self.finish()
+    def _read_to_target(self,target):
+        if target.find(','):
+            return target.split(',')
+        else:
+            return target
 
 class DemoUserHandler(tornado.web.RequestHandler):
     

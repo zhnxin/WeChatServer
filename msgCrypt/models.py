@@ -118,6 +118,8 @@ class PositiveMsg(object):
             totag = toTag
         elif isinstance(toUser, list):
             touser = '|'.join(toUser)
+            toparty = toParty
+            totag = toTag
         else:
             touser = ''
             if isinstance(toParty, list):
