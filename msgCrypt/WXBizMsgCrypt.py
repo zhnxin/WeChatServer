@@ -186,7 +186,7 @@ class Prpcrypt(object):
         except Exception as e:
             logger.exception(e)
             return  WXBizMsgCrypt_IllegalBuffer,None
-        if  from_corpid != corpid.encode('utf-8'):
+        if  from_corpid != corpid:
             return WXBizMsgCrypt_ValidateCorpid_Error,None
         return 0,xml_content
     
