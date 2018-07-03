@@ -92,6 +92,6 @@ def main():
 
 
 if __name__ == "__main__":
-    print("Run server on {}:{}".format(options.host, options.port))
+    logger.info("Run server on {}:{}".format(options.host, options.port))
     updateAccessToken()
     main()
