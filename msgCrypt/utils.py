@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding:utf-8 -*-
 
-from .WXBizzMsgCrypt import WXBizMsgCrypt
+from .WXBizMsgCrypt import WXBizMsgCrypt
 from .settings import CONFIG,logger
 
 def loadMsgCryptMap():
