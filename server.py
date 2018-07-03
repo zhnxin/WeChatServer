@@ -9,7 +9,9 @@ from tornado.options import define, options
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
 
-from msgCrypt.settings import logger, IP, PORT, MSGCRYPTMAP
+from msgCrypt.settings import logger, IP, PORT
+
+from msgCrypt.utils import MSGCRYPTMAP
 from msgCrypt.models import CallBackMsg,PositiveImageMsg
 from msgCrypt import ierror
 from handler.handlerFactory import getHandler

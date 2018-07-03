@@ -19,6 +19,7 @@ import sys
 import socket
 import requests
 from .ierror import *
+from .settings import logger
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
@@ -50,7 +51,7 @@ class SHA1:
             sha.update("".join(sortlist).encode('utf-8'))
             return  WXBizMsgCrypt_OK, sha.hexdigest()
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return  WXBizMsgCrypt_ComputeSignature_Error, None
   
 
@@ -76,7 +77,7 @@ class XMLParse:
             touser_name    = xml_tree.find("ToUserName")
             return  WXBizMsgCrypt_OK, encrypt.text, touser_name.text
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return  WXBizMsgCrypt_ParseXml_Error,None,None
     
     def generate(self, encrypt, signature, timestamp, nonce):
@@ -154,7 +155,7 @@ class Prpcrypt(object):
             # 使用BASE64对加密后的字符串进行编码
             return WXBizMsgCrypt_OK, base64.b64encode(ciphertext)
         except Exception as e:
-            print(e) 
+            logger.exception(e) 
             return  WXBizMsgCrypt_EncryptAES_Error,None
     
     def decrypt(self,text,corpid):
@@ -167,7 +168,7 @@ class Prpcrypt(object):
             # 使用BASE64对密文进行解码，然后AES-CBC解密
             plain_text  = cryptor.decrypt(base64.b64decode(text))
         except Exception as e:
-            print(e) 
+            logger.exception(e) 
             return  WXBizMsgCrypt_DecryptAES_Error,None
         try:
             pad = ord(plain_text[-1]) 
@@ -180,7 +181,7 @@ class Prpcrypt(object):
             xml_content = content[4 : xml_len+4] 
             from_corpid = content[xml_len+4:]
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return  WXBizMsgCrypt_IllegalBuffer,None
         if  from_corpid != corpid:
             return WXBizMsgCrypt_ValidateCorpid_Error,None
@@ -291,5 +292,5 @@ class WXBizMsgCrypt(object):
         if res.status_code / 100 == 2 and res.json()['errcode'] == 0:
             return res.json()['media_id']
         else:
-            print(res.text)
+            logger.debug(res.text)
             return None

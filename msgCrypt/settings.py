@@ -4,7 +4,6 @@
 import os
 import yaml
 import logging
-from .WXBizMsgCrypt import WXBizMsgCrypt
 
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -22,21 +21,12 @@ def get_conf():
     return configuration
 
 
-config = get_conf()
-IP = config['server'].get('ip', '0.0.0.0')
-PORT = config['server'].get("port", '8000')
-LOG_LEVEL = config['server'].get("loglever", 'debug')
+CONFIG = get_conf()
+IP = CONFIG['server'].get('ip', '0.0.0.0')
+PORT = CONFIG['server'].get("port", '8000')
+LOG_LEVEL = CONFIG['server'].get("loglever", 'debug')
 
-def loadMsgCryptMap():
-    MsgCryptMap={}
-    CorpID = config['wechat']['CorpID']
-    for app,args in config['wechat']['app'].items():
-        MsgCryptMap[app] = WXBizMsgCrypt(sToken=args['Token'],
-         sEncodingAESKey=args['EncodingAESKey'],
-         sCorpId=CorpID,sAgentId=args['AgentId'], sCorpsecret=args['Secret'])
-    return MsgCryptMap
 
-MSGCRYPTMAP = loadMsgCryptMap()
 def set_log(level, filename='wechatserver.log'):
     """
     return a log file object
