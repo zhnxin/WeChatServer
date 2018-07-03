@@ -7,6 +7,7 @@ from .settings import CONFIG,logger
 def loadMsgCryptMap():
     MsgCryptMap={}
     CorpID = CONFIG['wechat']['CorpID']
+    CorpID = CorpID.encode('utf-8')
     for app,args in CONFIG['wechat']['app'].items():
         MsgCryptMap[app] = WXBizMsgCrypt(sToken=args['Token'],
          sEncodingAESKey=args['EncodingAESKey'],

@@ -44,8 +44,11 @@ class SHA1:
         @param nonce: 随机字符串
         @return: 安全签名
         """
-        try:
+        if isinstance(encrypt,bytes):
+            sortlist = [token, timestamp, nonce, encrypt.decode('utf-8')]
+        else:
             sortlist = [token, timestamp, nonce, encrypt]
+        try:
             sortlist.sort()
             sha = hashlib.sha1()
             sha.update("".join(sortlist).encode('utf-8'))
@@ -193,7 +196,7 @@ class Prpcrypt(object):
         """ 
         rule = string.ascii_letters + string.digits
         text = random.sample(rule, 16)
-        return "".join(text)
+        return "".join(text).encode('utf-8')
         
 class WXBizMsgCrypt(object):
     #构造函数
@@ -248,7 +251,7 @@ class WXBizMsgCrypt(object):
         #sEncryptMsg: 加密后的可以直接回复用户的密文，包括msg_signature, timestamp, nonce, encrypt的xml格式的字符串,
         #return：成功0，sEncryptMsg,失败返回对应的错误码None     
         pc = Prpcrypt(self.key) 
-        ret,encrypt = pc.encrypt(sReplyMsg, self.m_sCorpid)
+        ret,encrypt = pc.encrypt(sReplyMsg.encode('utf-8'), self.m_sCorpid)
         if ret != 0:
             return ret,None
         if timestamp is None:
