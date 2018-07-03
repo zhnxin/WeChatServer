@@ -191,9 +191,9 @@ class Prpcrypt(object):
         """ 随机生成16位字符串
         @return: 16位字符串
         """ 
-        rule = string.letters + string.digits
-        str = random.sample(rule, 16)
-        return "".join(str)
+        rule = string.ascii_letters + string.digits
+        text = random.sample(rule, 16)
+        return "".join(text)
         
 class WXBizMsgCrypt(object):
     #构造函数
