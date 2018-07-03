@@ -116,8 +116,8 @@ class PKCS7Encoder():
         if amount_to_pad == 0:
             amount_to_pad = self.block_size
         # 获得补位所用的字符
-        pad = chr(amount_to_pad)
-        return text + pad * amount_to_pad
+        pad = chr(amount_to_pad)*amount_to_pad
+        return text + pad.encode('utf-8')
     
     def decode(self, decrypted):
         """删除解密后明文的补位字符
