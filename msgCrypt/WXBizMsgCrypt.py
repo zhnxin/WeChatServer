@@ -18,7 +18,7 @@ import xml.etree.cElementTree as ET
 import sys                                                                                                                                                                             
 import socket
 import requests
-import ierror
+from .ierror import *
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
@@ -48,10 +48,10 @@ class SHA1:
             sortlist.sort()
             sha = hashlib.sha1()
             sha.update("".join(sortlist))
-            return  ierror.WXBizMsgCrypt_OK, sha.hexdigest()
+            return  WXBizMsgCrypt_OK, sha.hexdigest()
         except Exceptionas as e:
             print(e)
-            return  ierror.WXBizMsgCrypt_ComputeSignature_Error, None
+            return  WXBizMsgCrypt_ComputeSignature_Error, None
   
 
 class XMLParse:
@@ -74,10 +74,10 @@ class XMLParse:
             xml_tree = ET.fromstring(xmltext)
             encrypt  = xml_tree.find("Encrypt")
             touser_name    = xml_tree.find("ToUserName")
-            return  ierror.WXBizMsgCrypt_OK, encrypt.text, touser_name.text
+            return  WXBizMsgCrypt_OK, encrypt.text, touser_name.text
         except Exceptionas as e:
             print(e)
-            return  ierror.WXBizMsgCrypt_ParseXml_Error,None,None
+            return  WXBizMsgCrypt_ParseXml_Error,None,None
     
     def generate(self, encrypt, signature, timestamp, nonce):
         """生成xml消息
@@ -152,10 +152,10 @@ class Prpcrypt(object):
         try:
             ciphertext = cryptor.encrypt(text)
             # 使用BASE64对加密后的字符串进行编码
-            return ierror.WXBizMsgCrypt_OK, base64.b64encode(ciphertext)
+            return WXBizMsgCrypt_OK, base64.b64encode(ciphertext)
         except Exceptionas as e:
             print(e) 
-            return  ierror.WXBizMsgCrypt_EncryptAES_Error,None
+            return  WXBizMsgCrypt_EncryptAES_Error,None
     
     def decrypt(self,text,corpid):
         """对解密后的明文进行补位删除
@@ -168,7 +168,7 @@ class Prpcrypt(object):
             plain_text  = cryptor.decrypt(base64.b64decode(text))
         except Exceptionas as e:
             print(e) 
-            return  ierror.WXBizMsgCrypt_DecryptAES_Error,None
+            return  WXBizMsgCrypt_DecryptAES_Error,None
         try:
             pad = ord(plain_text[-1]) 
             # 去掉补位字符串 
@@ -181,9 +181,9 @@ class Prpcrypt(object):
             from_corpid = content[xml_len+4:]
         except Exceptionas as e:
             print(e)
-            return  ierror.WXBizMsgCrypt_IllegalBuffer,None
+            return  WXBizMsgCrypt_IllegalBuffer,None
         if  from_corpid != corpid:
-            return ierror.WXBizMsgCrypt_ValidateCorpid_Error,None
+            return WXBizMsgCrypt_ValidateCorpid_Error,None
         return 0,xml_content
     
     def get_random_str(self):
@@ -205,7 +205,7 @@ class WXBizMsgCrypt(object):
             assert len(self.key) == 32
         except:
             throw_exception("[error]: EncodingAESKey unvalid !", FormatException) 
-            # return ierror.WXBizMsgCrypt_IllegalAesKey,None
+            # return WXBizMsgCrypt_IllegalAesKey,None
         self.m_sToken = sToken
         self.m_sCorpid = sCorpId
         self.agentID = sAgentId
@@ -233,7 +233,7 @@ class WXBizMsgCrypt(object):
         if ret  != 0:
             return ret, None 
         if not signature == sMsgSignature:
-            return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
+            return WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         ret,sReplyEchoStr = pc.decrypt(sEchoStr,self.m_sCorpid)
         return ret,sReplyEchoStr
@@ -277,7 +277,7 @@ class WXBizMsgCrypt(object):
         if ret  != 0:
             return ret, None 
         if not signature == sMsgSignature:
-            return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
+            return WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         ret,xml_content = pc.decrypt(encrypt,self.m_sCorpid)
         return ret,xml_content 
