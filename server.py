@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding:utf-8 -*-
+import requests
 import tornado.ioloop
 import tornado.web
 import tornado.gen
@@ -104,10 +105,20 @@ class ActiceMsgHandler(tornado.web.RequestHandler):
             if  msg_type == 'text':
                 self.send_text_msg(data.get('content',''),toUser, toParty, toTag)
             elif msg_type == 'img':
-                self.send_img_msg(self,toUser, toParty, toTag)
+                self.send_img_msg(toUser,toParty,toTag)
         self.write('finished')
         self.finish()
 
+class DemoUserHandler(tornado.web.RequestHandler):
+    
+    def get(self):
+        userid = self.get_argument("userid", "")
+        res = requests.get(
+            'https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token={}&userid={}'.format(MSGCRYPTMAP['demo'].access_token,userid),
+             verify=False,timeout=1
+            )
+        res.raise_for_status()
+        self.write(res.content)
 
 def updateAccessToken():
     for name, app in MSGCRYPTMAP.items():
@@ -118,7 +129,8 @@ def updateAccessToken():
 def main():
     application = tornado.web.Application([
         (r"^/public/api/{0,1}", DemoHandler),
-        (r"^/api/msg{0,1}",ActiceMsgHandler),
+        (r"^/api/demo/v1/msg{0,1}",ActiceMsgHandler),
+        (r"^/api/demo/v1/user{0,1}",ActiceMsgHandler)
     ])
     server = tornado.httpserver.HTTPServer(application)
     server.listen(options.port, address=IP)
