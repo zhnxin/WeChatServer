@@ -75,7 +75,7 @@ def updateAccessToken():
 
 def main():
     application = tornado.web.Application([
-        (r"^/api/public/{0,1}", DemoHandler),
+        (r"^/public/api/{0,1}", DemoHandler),
     ])
     server = tornado.httpserver.HTTPServer(application)
     server.listen(options.port, address=IP)
