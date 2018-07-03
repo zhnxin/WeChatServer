@@ -47,9 +47,9 @@ class SHA1:
             sortlist = [token, timestamp, nonce, encrypt]
             sortlist.sort()
             sha = hashlib.sha1()
-            sha.update("".join(sortlist))
+            sha.update("".join(sortlist).encode('utf-8'))
             return  WXBizMsgCrypt_OK, sha.hexdigest()
-        except Exceptionas as e:
+        except Exception as e:
             print(e)
             return  WXBizMsgCrypt_ComputeSignature_Error, None
   
@@ -75,7 +75,7 @@ class XMLParse:
             encrypt  = xml_tree.find("Encrypt")
             touser_name    = xml_tree.find("ToUserName")
             return  WXBizMsgCrypt_OK, encrypt.text, touser_name.text
-        except Exceptionas as e:
+        except Exception as e:
             print(e)
             return  WXBizMsgCrypt_ParseXml_Error,None,None
     
@@ -153,7 +153,7 @@ class Prpcrypt(object):
             ciphertext = cryptor.encrypt(text)
             # 使用BASE64对加密后的字符串进行编码
             return WXBizMsgCrypt_OK, base64.b64encode(ciphertext)
-        except Exceptionas as e:
+        except Exception as e:
             print(e) 
             return  WXBizMsgCrypt_EncryptAES_Error,None
     
@@ -166,7 +166,7 @@ class Prpcrypt(object):
             cryptor = AES.new(self.key,self.mode,self.key[:16])
             # 使用BASE64对密文进行解码，然后AES-CBC解密
             plain_text  = cryptor.decrypt(base64.b64decode(text))
-        except Exceptionas as e:
+        except Exception as e:
             print(e) 
             return  WXBizMsgCrypt_DecryptAES_Error,None
         try:
@@ -179,7 +179,7 @@ class Prpcrypt(object):
             xml_len = socket.ntohl(struct.unpack("I",content[ : 4])[0])
             xml_content = content[4 : xml_len+4] 
             from_corpid = content[xml_len+4:]
-        except Exceptionas as e:
+        except Exception as e:
             print(e)
             return  WXBizMsgCrypt_IllegalBuffer,None
         if  from_corpid != corpid:
@@ -209,6 +209,7 @@ class WXBizMsgCrypt(object):
         self.m_sToken = sToken
         self.m_sCorpid = sCorpId
         self.agentID = sAgentId
+        self.m_sCorpsecret = sCorpsecret
 
 		 #验证URL
          #@param sMsgSignature: 签名串，对应URL参数的msg_signature
@@ -219,7 +220,7 @@ class WXBizMsgCrypt(object):
          #@return：成功0，失败返回对应的错误码	
 
     def UpdateAccessToken(self):
-        res = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corpsecret={}".format(self.corpID, self.corpsecret),
+        res = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corpsecret={}".format(self.m_sCorpid, self.m_sCorpsecret),
                            verify=False,timeout=1)
         res.raise_for_status()
         result = res.json()
