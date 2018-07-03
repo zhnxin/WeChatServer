@@ -142,7 +142,7 @@ class PositiveMsg(object):
             'content-type':'application/json',
             'cache-control':'no-cache'
         }
-        message_body = json.dumps(self.messageBody,encoding='utf-8',ensure_ascii=False)
+        message_body = json.dumps(self.messageBody,ensure_ascii=False)
         res = requests.post(self.sendURL, data=message_body,headers=header)
         return res
 
