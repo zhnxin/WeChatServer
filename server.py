@@ -43,9 +43,14 @@ class DemoHandler(tornado.web.RequestHandler):
         msg_signature, timestamp, nonce = self.get_msg()
         echostr = self.get_argument("echostr", "")
         msg = CallBackMsg(msg_signature, timestamp, nonce)
-        ret, replyEchoStr = msg.verifyURL(sEchoStr=echostr, sMsgCrypt=MSGCRYPTMAP['demo'])
-        logger.debug("verify url ret:{}====replyEchoStr:{}".format(ret, replyEchoStr))
-        self.write(replyEchoStr)
+        try:
+            ret, replyEchoStr = msg.verifyURL(sEchoStr=echostr, sMsgCrypt=MSGCRYPTMAP['demo'])
+        except Exception as e:
+            logger.exception(e)
+            self.write(e)
+        else:
+            logger.debug("verify url ret:{}====replyEchoStr:{}".format(ret, replyEchoStr))
+            self.write(replyEchoStr)
 
     # handle received message
     def post(self):
