@@ -109,7 +109,7 @@ class PositiveMsg(object):
     #@param toTag: 发送目标，接受PTagID 和 [TagID1,TagID2,...]
     """
 
-    def __init__(self, access_token, agentid, toUser='@all', toParty='', toTag=''):
+    def __init__(self, access_token, agentid, toUser='', toParty='', toTag=''):
         self.sendURL = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={}".format(access_token)
         self.access_token = access_token
         if toUser == '@all':
@@ -148,17 +148,18 @@ class PositiveMsg(object):
 
 
 class PositiveTextMsg(PositiveMsg):
-    def __init__(self, access_token, agentid, toUser='@all', toParty='', toTag=''):
-        super(PositiveTextMsg, self).__init__(access_token, agentid, toUser, toParty, toTag)
+    def __init__(self, content='',**kwargs):
+        super(PositiveTextMsg, self).__init__(**kwargs)
         self.messageBody['msgtype'] = 'text'
+        self.messageBody['text'] = {'content': content}
 
     def setContent(self, content):
-        self.messageBody['text'] = {'content': content}
+        self.messageBody['text']['content'] = content
 
 
 class PositiveImageMsg(PositiveMsg):
-    def __init__(self, access_token, agentid, toUser='@all', toParty='', toTag=''):
-        super(PositiveImageMsg, self).__init__(access_token, agentid, toUser, toParty, toTag)
+    def __init__(self, **kwargs):
+        super(PositiveImageMsg, self).__init__(**kwargs)
         self.messageBody['msgtype'] = 'image'
 
     def setImage(self, imageFile, sMsgCrypt):
