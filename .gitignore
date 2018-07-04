@@ -37,4 +37,4 @@ tmp/*
 
 *.go
 *.bak
-*.yaml
+application.yaml
