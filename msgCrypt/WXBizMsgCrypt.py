@@ -91,6 +91,8 @@ class XMLParse:
         @param nonce: 随机字符串
         @return: 生成的xml字符串
         """
+        if isinstance(encrypt,bytes):
+            encrypt = encrypt.decode('utf-8')
         resp_dict = {
                     'msg_encrypt' : encrypt,
                     'msg_signaturet': signature,

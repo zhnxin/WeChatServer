@@ -41,7 +41,7 @@ def eventHandlerDemo(xml_content, sMsgCrypt):
 
 def enentHandlerDemo_image(xml_content, sMsgCrypt):
     image_send = PassiveImageMsg(xml_content)
-    with open('image/temp.jpg', 'rb') as imgFile:
+    with open('assets/image/temp.jpg', 'rb') as imgFile:
         to_xml = image_send.generateFromImage(imgFile, sMsgCrypt)
     return to_xml
 
