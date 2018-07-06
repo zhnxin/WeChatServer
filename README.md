@@ -1,7 +1,7 @@
 # weChatServer
 
 ## request
-- python 2.7/3.x
+- python 3.x
 - tornado
 - xmltodict
 
