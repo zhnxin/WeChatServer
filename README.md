@@ -19,32 +19,32 @@
 
 ### handler
 
-```
+```python
 def defaultHandler(xml_contend, sMsgCrypt):
     textSend = PassiveTextMsg(xml_contend)
     msg = 'hello world!'
     to_xml = textSend.generate(msg=msg)
-return to_xml
+    return to_xml
 ```
 传入已经解密的消息和加密类实例，返回构造完毕的回复消息str xml
 
 ### 责任链模式
 
-```
+```python
 textHandlerFactory = PoolTextMsgHandlerFactory()
 clickHandlerFactory = EventClickHandlerFactory(textHandlerFactory)
 
 # handler factory 入口
 def getHandler(xml_content):
     global clickHandlerFactory
-return clickHandlerFactory.process(xml_content)
+    return clickHandlerFactory.process(xml_content)
 ```
 
 ### PoolTextMsgHandlerFactory
 
 简陋的文本消息响应handlerFactory，通过匹配用户输入的utf-8文本返回hander回调方法。
 
-```
+```python
 # textHandlerFactory.put(u'<key word>',callbackHandler)
 textHandlerFactory.put(u"颜文字", defaultHandler)
 textHandlerFactory.put(u'溜了溜了', enentHandlerDemo_image)
